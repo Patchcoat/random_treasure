@@ -1,7 +1,6 @@
 package com.example.randomtreasure;
 
 import java.util.LinkedList;
-import java.util.ListIterator;
 
 /**
  * <h1>Treasure Component</h1>
@@ -116,21 +115,21 @@ public class TreasureComponent {
     Price cost() { return cost; }
 
     /**
-     * This function builds the full name and price of the treasure, taking into account all
+     * This function assembles the full name and price of the treasure, taking into account all
      * sub-components.
      * @return a new treasure component will all the costs and names combined together.
      */
-    TreasureComponent buildTreasure() {
+    TreasureComponent assembleTreasure() {
         StringBuilder fullName = new StringBuilder();
         Price costAccumulator  = new Price();
         TreasureComponent out  = new TreasureComponent();
 
         for (TreasureComponent component : components) {
-            TreasureComponent child = component.buildTreasure();
+            TreasureComponent child = component.assembleTreasure();
             fullName.append(child);
             costAccumulator = costAccumulator.add(child.cost());
         }
-        
+
         // CF Value is the value of the component multiplied by the cost factor plus one
         // only the Cost Factor of the immediate children affect the CF value. This is intentional
         // and desirable.
