@@ -117,7 +117,7 @@ public class TreasureComponent {
     /**
      * This function assembles the full name and price of the treasure, taking into account all
      * sub-components.
-     * @return a new treasure component will all the costs and names combined together.
+     * @return a new treasure component with all the costs and names combined together.
      */
     TreasureComponent assembleTreasure() {
         StringBuilder fullName = new StringBuilder();
@@ -131,12 +131,12 @@ public class TreasureComponent {
         }
 
         // CF Value is the value of the component multiplied by the cost factor plus one
-        // only the Cost Factor of the immediate children affect the CF value. This is intentional
-        // and desirable.
+        // only the Cost Factor of the immediate children affect the CF value. This is
+        // intentional and desirable.
         int CFValue = cost.value() * (int) (costAccumulator.CF() + 1);
-        // first the CF Value is calculated, then the value of the sub-components are added to that
+        // first the CF Value is calculated, then the value of the sub-components are added to that.
+        // it is important the sub-component values are not added before the CFValue is calculated.
         out.setCost(new Price(CFValue + costAccumulator.value(), 0));
-        // CF of cost is unaffected
 
         out.setName(fullName.append(name).append(" ").toString());
 
