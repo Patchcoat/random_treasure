@@ -1,6 +1,7 @@
 package com.example.randomtreasure;
 
 import java.util.LinkedList;
+import java.util.ListIterator;
 
 /**
  * <h1>Treasure Component</h1>
@@ -19,6 +20,7 @@ public class TreasureComponent {
     String name;
     String bookReference;
     String description;
+    Price cost;
     LinkedList<TreasureComponent> components;
 
     /**
@@ -70,6 +72,17 @@ public class TreasureComponent {
     void setDescription(String description) { this.description = description; }
 
     /**
+     * @param cost The monetary value of the component, or the amount that the component modifies
+     *             the monetary value of the parent component.
+     */
+    void setCost(Price cost) { this.cost = cost; }
+
+    /**
+     * @param component the component to add as a child of this component
+     */
+    void addComponent(TreasureComponent component) { components.addLast(component); }
+
+    /**
      * @return the unique identifier of the component
      */
     int ID() { return id; }
@@ -96,4 +109,47 @@ public class TreasureComponent {
      */
     String description() { return description; }
 
+    /**
+     * @return returns the monetary value of the component, or the amount that the component
+     *         modifies the monetary value of the parent component.
+     */
+    Price cost() { return cost; }
+
+    /**
+     * This function builds the full name and price of the treasure, taking into account all
+     * sub-components.
+     * @return a new treasure component will all the costs and names combined together.
+     */
+    TreasureComponent buildTreasure() {
+        StringBuilder fullName = new StringBuilder();
+        Price costAccumulator  = new Price();
+        TreasureComponent out  = new TreasureComponent();
+
+        for (TreasureComponent component : components) {
+            TreasureComponent child = component.buildTreasure();
+            fullName.append(child);
+            costAccumulator = costAccumulator.add(child.cost());
+        }
+        
+        // CF Value is the value of the component multiplied by the cost factor plus one
+        // only the Cost Factor of the immediate children affect the CF value. This is intentional
+        // and desirable.
+        int CFValue = cost.value() * (int) (costAccumulator.CF() + 1);
+        // first the CF Value is calculated, then the value of the sub-components are added to that
+        out.setCost(new Price(CFValue + costAccumulator.value(), 0));
+        // CF of cost is unaffected
+
+        out.setName(fullName.append(name).append(" ").toString());
+
+        return out;
+    }
+
+    /**
+     * Converts TreasureComponent to a string.
+     * @return the name of the TreasureComponent
+     */
+    @Override
+    public String toString() {
+        return name;
+    }
 }
