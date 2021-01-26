@@ -1,5 +1,8 @@
 package com.example.randomtreasure;
 
+/**
+ * @since 2021-1-26
+ */
 public class Price {
 
     /**

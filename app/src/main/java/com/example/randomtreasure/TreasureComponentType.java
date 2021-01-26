@@ -3,6 +3,8 @@ package com.example.randomtreasure;
 /**
  * <h1>Treasure Component Type</h1>
  * This enum contains every single type of treasure and treasure component.
+ *
+ * @since 2021-1-25
  */
 public enum TreasureComponentType {
     /**
@@ -10,9 +12,9 @@ public enum TreasureComponentType {
      */
     EMPTY,
     /**
-     * The weight of the parent component
+     * The quantity of the parent component. Could be the weight in lbs or oz or volume in gallons.
      */
-    WEIGHT,
+    QUANTITY,
     /**
      * The component is a spice
      */
