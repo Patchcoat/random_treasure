@@ -41,7 +41,7 @@ public class FirstFragment extends Fragment {
             price = new DecimalFormat("#0.00",
                     DecimalFormatSymbols.getInstance(Locale.ENGLISH)).format(
                     treasure.cost().value() / 100);
-        String out = treasure.name() + ", $" + price;
+        String out = "$" + price + ", " + treasure.name();
         treasureText.setText(out);
     }
 
