@@ -129,8 +129,7 @@ public class TreasureComponent {
         TreasureComponent out  = new TreasureComponent();
 
         for (TreasureComponent component : components) {
-            TreasureComponent child = component.assembleTreasure();
-            fullName.append(child);
+            fullName.append(component.assembleTreasure());
             costAccumulator = costAccumulator.add(component.cost());
         }
 
