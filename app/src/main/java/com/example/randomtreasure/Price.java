@@ -56,4 +56,12 @@ public class Price {
         if (null == other) return null;
         return new Price(value + other.value, CF + other.CF);
     }
+
+    @Override
+    public String toString() {
+        return "Price{" +
+                "value=" + value +
+                ", CF=" + CF +
+                '}';
+    }
 }

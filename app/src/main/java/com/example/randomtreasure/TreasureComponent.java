@@ -1,5 +1,7 @@
 package com.example.randomtreasure;
 
+import android.util.Log;
+
 import java.util.LinkedList;
 
 /**
@@ -14,13 +16,13 @@ import java.util.LinkedList;
 
 public class TreasureComponent {
 
-    int id;
-    TreasureComponentType type;
-    String name;
-    String bookReference;
-    String description;
-    Price cost;
-    LinkedList<TreasureComponent> components;
+    private int id;
+    private TreasureComponentType type;
+    private String name;
+    private String bookReference;
+    private String description;
+    private Price cost;
+    private LinkedList<TreasureComponent> components;
 
     /**
      * This method creates a default empty treasure component with an ID 0 and a type of EMPTY.
@@ -28,6 +30,7 @@ public class TreasureComponent {
     TreasureComponent(){
         id = 0;
         type = TreasureComponentType.EMPTY;
+        components = new LinkedList<>();
     }
 
     /**
@@ -39,6 +42,7 @@ public class TreasureComponent {
     TreasureComponent(int id, TreasureComponentType type){
         this.id = id;
         this.type = type;
+        components = new LinkedList<>();
     }
 
     /**
@@ -127,13 +131,13 @@ public class TreasureComponent {
         for (TreasureComponent component : components) {
             TreasureComponent child = component.assembleTreasure();
             fullName.append(child);
-            costAccumulator = costAccumulator.add(child.cost());
+            costAccumulator = costAccumulator.add(component.cost());
         }
 
         // CF Value is the value of the component multiplied by the cost factor plus one
         // only the Cost Factor of the immediate children affect the CF value. This is
         // intentional and desirable.
-        int CFValue = cost.value() * (int) (costAccumulator.CF() + 1);
+        int CFValue = (int) (cost.value() * (costAccumulator.CF() + 1));
         // first the CF Value is calculated, then the value of the sub-components are added to that.
         // it is important the sub-component values are not added before the CFValue is calculated.
         out.setCost(new Price(CFValue + costAccumulator.value(), 0));
@@ -148,7 +152,5 @@ public class TreasureComponent {
      * @return the name of the TreasureComponent
      */
     @Override
-    public String toString() {
-        return name;
-    }
+    public String toString() { return name; }
 }
