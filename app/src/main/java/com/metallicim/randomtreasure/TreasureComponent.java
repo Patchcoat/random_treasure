@@ -1,6 +1,4 @@
-package com.example.randomtreasure;
-
-import android.util.Log;
+package com.metallicim.randomtreasure;
 
 import java.util.LinkedList;
 

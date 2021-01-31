@@ -1,4 +1,4 @@
-package com.example.randomtreasure;
+package com.metallicim.randomtreasure;
 
 import android.content.Context;
 

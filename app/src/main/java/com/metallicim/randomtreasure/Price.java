@@ -1,4 +1,4 @@
-package com.example.randomtreasure;
+package com.metallicim.randomtreasure;
 
 /**
  * @since 2021-1-26

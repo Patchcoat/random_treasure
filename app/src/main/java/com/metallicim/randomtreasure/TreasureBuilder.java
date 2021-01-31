@@ -1,7 +1,4 @@
-package com.example.randomtreasure;
-
-import android.util.Log;
-import android.util.Pair;
+package com.metallicim.randomtreasure;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;

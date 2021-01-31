@@ -1,4 +1,4 @@
-package com.example.randomtreasure;
+package com.metallicim.randomtreasure;
 
 /**
  * <h1>Treasure Component Type</h1>
