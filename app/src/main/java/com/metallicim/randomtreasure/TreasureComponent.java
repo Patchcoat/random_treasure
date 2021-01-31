@@ -29,6 +29,7 @@ public class TreasureComponent {
         id = 0;
         type = TreasureComponentType.EMPTY;
         components = new LinkedList<>();
+        cost = new Price();
     }
 
     /**
@@ -41,6 +42,7 @@ public class TreasureComponent {
         this.id = id;
         this.type = type;
         components = new LinkedList<>();
+        cost = new Price();
     }
 
     /**
@@ -127,8 +129,10 @@ public class TreasureComponent {
         TreasureComponent out  = new TreasureComponent();
 
         for (TreasureComponent component : components) {
-            fullName.append(component.assembleTreasure());
-            costAccumulator = costAccumulator.add(component.cost());
+            TreasureComponent assembled = component.assembleTreasure();
+            fullName.append(assembled).append(" ");
+            costAccumulator = costAccumulator.add(
+                    new Price (assembled.cost().value(), component.cost().CF()));
         }
 
         // CF Value is the value of the component multiplied by the cost factor plus one
@@ -139,7 +143,7 @@ public class TreasureComponent {
         // it is important the sub-component values are not added before the CFValue is calculated.
         out.setCost(new Price(CFValue + costAccumulator.value(), 0));
 
-        out.setName(fullName.append(name).append(" ").toString());
+        out.setName(fullName.append(name).toString());
 
         return out;
     }

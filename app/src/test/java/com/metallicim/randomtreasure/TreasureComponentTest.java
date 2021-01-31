@@ -80,16 +80,16 @@ public class TreasureComponentTest {
 
         TC1.setCost(new Price(10, 0));
         TC2.setCost(new Price(0, 2));
-        TC3.setCost(new Price(0, 0));
+        TC3.setCost(new Price(100, 0));
         TC4.setCost(new Price(0, 1));
-        TC5.setCost(new Price(100, 0));
+        TC5.setCost(new Price(1, 0));
 
         TC3.addComponent(TC4); TC3.addComponent(TC5);
         TC1.addComponent(TC2); TC1.addComponent(TC3);
 
         Price assembledPrice = TC1.assembleTreasure().cost();
 
-        assertEquals(230, assembledPrice.value());
+        assertEquals(231, assembledPrice.value());
         assertEquals(0, assembledPrice.CF(), 0.0001);
     }
 }
