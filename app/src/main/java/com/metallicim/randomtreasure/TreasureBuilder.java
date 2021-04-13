@@ -2,6 +2,7 @@ package com.metallicim.randomtreasure;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
+import java.util.Arrays;
 import java.util.Locale;
 
 import javax.crypto.SealedObject;
@@ -22,6 +23,19 @@ public class TreasureBuilder {
      */
     public static int randomInt(int max) {
         return (int) ((max) * Math.random());
+    }
+
+    /**
+     * Roll some number of d6 dice and return the sum
+     * @param count the number of dice to roll
+     * @return the total of all rolled dice added together
+     */
+    public static int rollD6(int count) {
+        int total = 0;
+        for (int i = 0; i < count; i++) {
+            total += randomInt(6) + 1;
+        }
+        return total;
     }
 
     /**
@@ -88,7 +102,10 @@ public class TreasureBuilder {
         return -1;
     }
 
-
+    /**
+     * Roll against the race table for the purpose of Contraband Leather
+     * @return a fantasy race (including human)
+     */
     public static String rollRaceLeather() {
         String[] races = {"Cat-Folk", "Coleopteran", "Corpse-Eater", "Dark One", "Dwarf", "Half-Elf", "High Elf", "Mountain Elf", "Sea Elf", "Shadow Elf", "Winged Elf", "Wood Elf", "Faun",
                 "Leprecaun", "Nymph", "Pixie", "Gargoyle", "Gnome", "Goblin", "Half-Orc", "Hobgoblin", "Orc", "Halfling", "Celestial", "Elder-Spawn", "Infernal", "Human", "Air-Infused", "Earth-Infused",
@@ -99,14 +116,14 @@ public class TreasureBuilder {
 
     /**
      * Build an animal, used for leather and fur in the buildFiber() function
-     * @param type 0 for a common animal, 1 for an exotic animal
+     * @param type If SubTable.EXOTICANIMAL is specified it will use the Exotic Animal table, otherwise it will use the Common Animal table.
      * @return a Treasure Component with it's name equal to the randomly generated animal
      */
-    public static TreasureComponent buildAnimal(int type) {
+    public static TreasureComponent buildAnimal(SubTable type) {
         String[] commonAnimals = {"Seal", "Monkey", "Rabbit", "Fox", "Goat", "Horse", "Ox", "Deer", "Elk", "Reindeer", "Antelope", "Ibex"};
         String[] exoticAnimals = {"Sable", "Ermine", "Jaguar", "Lion", "Tiger", "Wolf", "Bear", "Wyvern", "Dire Wolf" , "Cave Bear", "Giant Ape", "Frost Snake"};
         String[] animals = commonAnimals;
-        if (type == 1) {
+        if (type == SubTable.EXOTICANIMAL) {
             animals = exoticAnimals;
         }
         TreasureComponent animal = new TreasureComponent(0, TreasureComponentType.TYPE);
@@ -139,137 +156,139 @@ public class TreasureBuilder {
         weight.setName(new DecimalFormat("0.0", DecimalFormatSymbols.getInstance(Locale.ENGLISH)).format(weightValue) + " oz");
         weight.setCost(new Price(0, weightValue - 1));
 
+        // TODO decorations
+
         // apply the weight to the spice
         spice.addComponent(weight);
 
         return spice.assembleTreasure();
     }
 
-    public static TreasureComponent buildFiber() {
-        String[] fibers = {"Cloth", "Fur", "Leather", "Fiber", "Scale-Hide"};
-        int[] probabilities = {0,0,0,0,2};
-        int[] prices = {0,0,0,0,27500};
-        int[] weights = {0,0,0,0,50};
-        String[] clothType = {"Otherworldly", "Giant-Spider Silk", "Gauze", "Linen", "Pashmina Wool", "Plain Silk", "Samite", "Satin", "Velvet", "Wool"};
-        int[] clothProbabilities = {1, 1, 2, 2, 2, 2, 2, 2, 2, 1};
-        int[] clothPrices = {200, 65, 5, 14, 45, 17, 42, 75, 18, 15};
-        double[] clothWeights = {7.5, 1, 1.5, 2.5, 4, 2, 3, 2, 5, 6};
-        String[] furType = {"Common", "Exotic"};
-        int[] furProbabilities = {1, 2};
-        int[] furPrices = {200, 500};
-        double[] furWeights = {75, 75};
-        String[] leatherType = {"Common", "Exotic", "Contraband", "Otherworldly"};
-        int[] leatherProbabilities = {2, 2, 2, 1};
-        int[] leatherPrices = {150, 250, 500, 1000};
-        double[] leatherWeights = {50, 50, 25, 50};
-        String[] fiberType = {"Linen", "Silk", "Wild Silk", "Wool", "Pashmina Wool", "Giant-Spider Silk", "Otherworldly"};
-        int[] fiberProbabilities = {1, 1, 1, 1, 1, 1, 1};
-        int[] fiberPrices = {25, 75, 65, 20, 60, 1000, 7};
-
-        TreasureComponent fiber = new TreasureComponent(0, TreasureComponentType.FIBER);
-        TreasureComponent type = new TreasureComponent(0, TreasureComponentType.TYPE);
-        TreasureComponent weight = new TreasureComponent(0, TreasureComponentType.QUANTITY);
-        TreasureComponent area = new TreasureComponent(0, TreasureComponentType.QUANTITY);
-
-        probabilities[0] = ArraySum(clothProbabilities);
-        probabilities[1] = ArraySum(furProbabilities);
-        probabilities[2] = ArraySum(leatherProbabilities);
-        probabilities[3] = ArraySum(fiberProbabilities);
-
-        int num = randomInt(ArraySum(probabilities));
-        int fiberCategory = selectFromProbabilityList(probabilities, num);
-        fiber.setName(fibers[fiberCategory]);
-        switch(fiberCategory) {
-            case 0: {
-                int clothIndex = selectFromProbabilityList(clothProbabilities, num);
-                fiber.setCost(new Price(clothPrices[clothIndex] * 100, 0));
-                fiber.setBookReference("Dungeon Fantasy 8 p. 12");
-                // weight
-                if (clothIndex == 1) {
-                    weight.setName("1 lb.");
-                } else {
-                    weight.setName(clothWeights[clothIndex] + " lbs.");
+    /* For debugging
+    public static TreasureComponent buildFiberAll() {
+        for (int i = 0;  i < 36; i++) {
+            if (i >= 17 && i <= 23) {
+                for (int j = 0; j < 12; j++) {
+                    System.out.println(i + " " + j + " " + buildFiber(i, j).assembleTreasure());
                 }
-                // area
-                area.setName("per 100-sq-foot bolt of");
-                // type
-                type.setName(clothType[clothIndex]);
+            } else if (i >= 24 && i <= 25) {
+                for (int j = 0; j < 43; j++) {
+                    System.out.println(i + " " + j + " " + buildFiber(i, j).assembleTreasure());
+                }
+            } else {
+                System.out.println(i + " " + buildFiber(i, -1).assembleTreasure());
+            }
+        }
 
-                fiber.addComponent(weight);
-                fiber.addComponent(area);
-                fiber.addComponent(type);
-            } break;
-            case 1: {
-                int furIndex = selectFromProbabilityList(
-                        furProbabilities, num - PartialArraySum(probabilities, fiberCategory));
-                fiber.setCost(new Price(furPrices[furIndex] * 100, 0));
-                fiber.setBookReference("Dungeon Fantasy 8 p. 12");
-                // weight
-                weight.setName(furWeights[furIndex] + " lbs");
-                // area
-                area.setName("per 100-sq-foot bundle of");
-                // type
-                type.setName(furType[furIndex]);
+        return new TreasureComponent(0, TreasureComponentType.EMPTY);
+    }
+     */
 
-                fiber.addComponent(weight);
-                fiber.addComponent(area);
-                fiber.addComponent(type);
-                TreasureComponent animal = buildAnimal(furIndex);
-                fiber.addComponent(animal);
-            } break;
-            case 2: {
-                int leatherIndex = selectFromProbabilityList(
-                        leatherProbabilities, num - PartialArraySum(probabilities, fiberCategory));
-                fiber.setCost(new Price(leatherPrices[leatherIndex] * 100, 0));
-                fiber.setBookReference("Dungeon Fantasy 8 p. 12");
-                // weight
-                weight.setName(leatherWeights[leatherIndex] + " lbs.");
-                // area
-                area.setName("per 100-sq-foot bundle of");
-                // type
-                type.setName(leatherType[leatherIndex]);
+    /**
+     * Build a fiber, fabric, leather, or fur. This includes weight, area, and price
+     * @return a treasure component containing the fiber, fur, fabric, or leather as well as components
+     * describing it's cost, type, weight, and area if applicable.
+     */
+    public static TreasureComponent buildFiber() {
+        String[] fibers = {"Cloth", "Fur", "Leather", "Fiber"};
+        String[][] types = {
+                {"Otherworldly", "Giant-Spider Silk", "Gauze", "Linen", "Pashmina Wool", "Plain Silk", "Samite", "Satin", "Velvet", "Wool"},
+                {"Common", "Exotic"},
+                {"Common", "Exotic", "Contraband", "Scale-Hide", "Otherworldly"},
+                {"Linen", "Silk", "Wild Silk", "Wool", "Pashmina Wool", "Giant-Spider Silk", "Otherworldly"}};
+        int[][] probabilities = {
+                {1, 1, 2, 2, 2, 2, 2, 2, 2, 1},
+                {1, 2},
+                {2, 2, 2, 2, 1},
+                {1, 1, 1, 1, 1, 1, 1}
+        };
+        int[][] prices = {
+                {20000, 6500, 500, 1400, 4500, 1700, 4200, 7500, 1800, 1500},
+                {20000, 50000},
+                {15000, 25000, 50000, 27500, 100000},
+                {25, 75, 65, 20, 60, 1000, 7}
+        };
+        int[][] areas = {{100}, {100}, {100}, {}};
+        String[] areaType = {"bolt","bundle","bundle",""};
+        double[][] weights = {
+                {7.5, 1, 1.5, 2.5, 4, 2, 3, 2, 5, 6},
+                {75, 75},
+                {50, 50, 25, 50, 50},
+                {}// no weight means the weight is rolled, 2d6*3 hardcoded
+        };
+        SubTable[][] subTable = {{},
+                {SubTable.COMMONANIMAL, SubTable.EXOTICANIMAL},
+                {SubTable.COMMONANIMAL, SubTable.EXOTICANIMAL, SubTable.RACELEATHER, SubTable.NONE, SubTable.NONE},
+                {}};
+        int[] page = {12, 12, 12, 13};
 
-                fiber.addComponent(weight);
-                fiber.addComponent(area);
-                fiber.addComponent(type);
-                if (leatherIndex <= 1) {
-                    TreasureComponent animal = buildAnimal(leatherIndex);
+        // create a list of how probable each category is
+        int[] probabilityCategories = new int[probabilities.length];
+        for (int i = 0; i < probabilityCategories.length; i++) {
+            probabilityCategories[i] += ArraySum(probabilities[i]);
+        }
+
+        // create all of the components that are likely to be used with this treasure
+        int id = 0;
+        TreasureComponent fiber = new TreasureComponent(id++, TreasureComponentType.FIBER);
+        TreasureComponent weight = new TreasureComponent(id++, TreasureComponentType.QUANTITY);
+        TreasureComponent area = new TreasureComponent(0, TreasureComponentType.QUANTITY);
+        TreasureComponent type = new TreasureComponent(0, TreasureComponentType.TYPE);
+
+        // select a random element from the table
+        int num = randomInt(ArraySum(probabilityCategories));
+        int fiberCategory = selectFromProbabilityList(probabilityCategories, num);
+        fiber.setName(fibers[fiberCategory]);
+        int index = selectFromProbabilityList(
+                probabilities[fiberCategory], num - PartialArraySum(probabilityCategories, fiberCategory));
+
+        // book reference
+        fiber.setBookReference("Dungeon Fantasy 8 p. " + page[fiberCategory]);
+
+        // cost
+        fiber.setCost(new Price(prices[fiberCategory][index], 0));
+
+        // weight
+        double weightValue;
+        if (weights[fiberCategory].length == 0) {
+            weightValue = rollD6(2) * 3;
+            weight.setCost(new Price(0, weightValue - 1));
+        } else {
+            weightValue = weights[fiberCategory][index];
+        }
+        if (weightValue == 1) {
+            weight.setName("1 lb.");
+        } else {
+            weight.setName(weightValue + " lbs.");
+        }
+        fiber.addComponent(weight);
+
+        // area
+        if (areas[fiberCategory].length != 0) {
+            area.setName("per " + areas[fiberCategory][0] + "-sq-foot " + areaType[fiberCategory] + " of");
+            area.setID(id++);
+            fiber.addComponent(area);
+        }
+
+        // type
+        type.setName(types[fiberCategory][index]);
+        type.setID(id);
+        fiber.addComponent(type);
+        if (subTable[fiberCategory].length != 0) {
+            switch(subTable[fiberCategory][index]) {
+                case COMMONANIMAL:
+                case EXOTICANIMAL: {
+                    TreasureComponent animal = buildAnimal(subTable[fiberCategory][index]);
                     fiber.addComponent(animal);
-                } else if (leatherIndex == 2) {
+                } break;
+                case RACELEATHER: {
                     TreasureComponent race = new TreasureComponent(0, TreasureComponentType.TYPE);
                     race.setName(rollRaceLeather());
                     fiber.addComponent(race);
-                }
-            } break;
-            case 3: {
-                int fiberIndex = selectFromProbabilityList(
-                        fiberProbabilities, num - PartialArraySum(probabilities, fiberCategory));
-                fiber.setCost(new Price(fiberPrices[fiberIndex], 0));
-                fiber.setBookReference("Dungeon Fantasy 8 p. 12");
-                // weight
-                double weightValue = (randomInt(6) + randomInt(6) + 2) * 3;
-                weight.setName(weightValue + " lbs. of ");
-                weight.setCost(new Price(0, weightValue - 1));
-                // type
-                type.setName(fiberType[fiberIndex]);
-
-                fiber.addComponent(weight);
-                fiber.addComponent(type);
-            } break;
-            case 4: {
-                fiber.setCost(new Price(prices[fiberCategory], 0));
-                fiber.setBookReference("Dungeon Fantasy 8 p. 12");
-                // weight
-                weight.setName(weights[fiberCategory] + " lbs.");
-                // area
-                area.setName("per 100-sq-foot bundle of");
-
-                // apply the weight and area
-                fiber.addComponent(weight);
-                fiber.addComponent(area);
-            } break;
-            default:
-                break;
+                } break;
+                default:
+                    break;
+            }
         }
 
         return fiber.assembleTreasure();
