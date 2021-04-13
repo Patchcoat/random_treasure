@@ -12,11 +12,19 @@ public enum TreasureComponentType {
      */
     EMPTY,
     /**
-     * The quantity of the parent component. Could be the weight in lbs or oz or volume in gallons.
+     * The quantity of the parent component. Could be the weight in lbs or oz, area in square feet, or volume in gallons.
      */
     QUANTITY,
     /**
+     * The type of the component.
+     */
+    TYPE,
+    /**
      * The component is a spice
      */
-    SPICE
+    SPICE,
+    /**
+     * The component is fibrous
+     */
+    FIBER
 }

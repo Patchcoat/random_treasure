@@ -49,5 +49,6 @@ public class FirstFragment extends Fragment {
         treasureText = view.findViewById(R.id.treasure);
 
         view.findViewById(R.id.button_spice).setOnClickListener(view1 -> treasureHandler(TreasureBuilder.buildSpice()));
+        view.findViewById(R.id.button_fiber).setOnClickListener(view1 -> treasureHandler(TreasureBuilder.buildFiber()));
     }
 }
