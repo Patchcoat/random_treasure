@@ -11,6 +11,7 @@
     <string name="swipe_right">swipe right for buttons</string>
     <string name="defaultTreasure">Treasure</string>
 
-    <string name="spice">Roll a Random Spice</string>
-    <string name="fiber">Roll a Random Fiber/Fabric</string>
+    <string name="spice">Spice</string>
+    <string name="fiber">Fiber/Fabric</string>
+    <string name="jewel">Jewel</string>
 </resources>

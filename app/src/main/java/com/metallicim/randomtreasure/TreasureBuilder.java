@@ -124,7 +124,9 @@ public class TreasureBuilder {
 
         double weightValue = rollD6(2) / 4.0 + rollD6(bigger);
         weight.setName(weightValue + " carat");
-        int cost = (int) ((int) (weightValue * weightValue + 4 * weightValue) * valueModifier[index] + 100);
+        double costValue = (weightValue * weightValue + 4 * weightValue) * valueModifier[index] * 100.0;
+        System.out.println(costValue);
+        int cost = (int) (costValue);
         decoration.setCost(new Price(cost, 0));
         decoration.addComponent(weight);
 
@@ -142,7 +144,7 @@ public class TreasureBuilder {
                 "Cheap Fringe", "Expensive Fringe", "Minimal Lace", "Extensive Lace", "Simple Feathers", "Elaborate Feathers", "Cheap Fur Trim", "Expensive Fur Trim", "Minimal Cheap Beading",
                 "Extensive Cheap Beading", "Minimal Expensive Beading", "Extensive Expensive Beading", "Expensive Bells", "Minimal Embroidery", "Extensive Embroidery", "Tattooed Minimally",
                 "Tattooed Extensively", "Tapestry Weaving", "Quilting", "Patchwork Quilt"};
-        int[] probabilities = {2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 2, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
+        int[] probabilities = {2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 2, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
         double[] costFactors = {2, 19, 1.5, 4, 8, 0.5, 2.5, 0.5, 2, 5, 1, 6, 3.5, 9, 0.5, 4, 3, 8, 1.5, 4, 3, 7, 3, 10, 2, 5, 2, 6, 6, 4, 8};
         decorativePrepend[] prepend = {decorativePrepend.MADEOF, decorativePrepend.MADEOF, decorativePrepend.NONE, decorativePrepend.NONE, decorativePrepend.NONE, decorativePrepend.WITH,
                 decorativePrepend.NONE, decorativePrepend.WITH, decorativePrepend.WITH, decorativePrepend.WITH, decorativePrepend.WITH, decorativePrepend.WITH, decorativePrepend.WITH,

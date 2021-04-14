@@ -38,7 +38,7 @@ public class FirstFragment extends Fragment {
         if (treasure.cost().value() % 100 != 0)
             price = new DecimalFormat("#0.00",
                     DecimalFormatSymbols.getInstance(Locale.ENGLISH)).format(
-                    treasure.cost().value() / 100);
+                    treasure.cost().value() / 100.0);
         String out = "$" + price + ", " + treasure.name();
         treasureText.setText(out);
     }
@@ -50,5 +50,6 @@ public class FirstFragment extends Fragment {
 
         view.findViewById(R.id.button_spice).setOnClickListener(view1 -> treasureHandler(TreasureBuilder.buildSpice()));
         view.findViewById(R.id.button_fiber).setOnClickListener(view1 -> treasureHandler(TreasureBuilder.buildFiber()));
+        view.findViewById(R.id.button_jewel).setOnClickListener(view1 -> treasureHandler(TreasureBuilder.buildJewel()));
     }
 }
