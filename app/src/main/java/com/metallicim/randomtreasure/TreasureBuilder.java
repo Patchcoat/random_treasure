@@ -102,6 +102,10 @@ public class TreasureBuilder {
         return -1;
     }
 
+    /**
+     * Build a jewel
+     * @return the name, size, and cost of the jewel
+     */
     public static TreasureComponent buildJewel() {
         String[] jewels = {"", "Agate", "Azurite", "Chalcedony", "Hematite", "Jade", "Jet", "Magnetite", "Malachite", "Obsidian", "Quartz", "Amber", "Amethyst", "Calcite",
                 "Sard", "Coral", "Lapis Lazuli", "Onyx", "Tourmaline", "Turquoise", "Aquamarine", "Beryl", "Bloodstone", "Cat's Eye", "Emerald", "Garnet", "Iolite", "Moonstone",
@@ -133,12 +137,20 @@ public class TreasureBuilder {
         return decoration.assembleTreasure();
     }
 
+    /**
+     * What to prepend (or in the case of POSTWITH, append) to the description of an embellishment
+     */
     private enum decorativePrepend {
         NONE,
         MADEOF,
         WITH,
         POSTWITH
     }
+    /**
+     * Build a soft embellishment
+     * @param id since it's rare for an embellishment to be on it's own, it can take in an ID
+     * @return the embellishment and cost factor
+     */
     public static TreasureComponent buildSoftEmbellishment(int id) {
         String[] decorations = {"Fine Material", "Exceptional Material", "Dyed Cheaply", "Dyed", "Dyed Expensively", "Block Printing", "Resist Dyed", "Branding", "Cheap Patchwork", "Expensive Patchwork",
                 "Cheap Fringe", "Expensive Fringe", "Minimal Lace", "Extensive Lace", "Simple Feathers", "Elaborate Feathers", "Cheap Fur Trim", "Expensive Fur Trim", "Minimal Cheap Beading",
@@ -172,7 +184,11 @@ public class TreasureBuilder {
 
         return decoration;
     }
-
+    /**
+     * Build a hard embellishment
+     * @param id since it's rare for an embellishment to be on it's own, it can take in an ID
+     * @return the embellishment and cost factor or, for a jewel, the price
+     */
     public static TreasureComponent buildHardEmbellishment(int id) {
         String[] decorations = {"Fine Material", "Exceptional Material", "Cheap Fringe", "Expensive Fringe", "Minimal Beads/Nails", "Extensive Beads/Nails", "Branding",
                 "Minimal Painting/Enamel", "Extensive Painting/Enamel", "Minimal Relief", "Extensive Relief", "Minimal Cheap Inlay", "Extensive Cheap Inlay", "Minimal Expensive Inlay",
