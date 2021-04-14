@@ -102,6 +102,126 @@ public class TreasureBuilder {
         return -1;
     }
 
+    public static TreasureComponent buildJewel() {
+        String[] jewels = {"", "Agate", "Azurite", "Chalcedony", "Hematite", "Jade", "Jet", "Magnetite", "Malachite", "Obsidian", "Quartz", "Amber", "Amethyst", "Calcite",
+                "Sard", "Coral", "Lapis Lazuli", "Onyx", "Tourmaline", "Turquoise", "Aquamarine", "Beryl", "Bloodstone", "Cat's Eye", "Emerald", "Garnet", "Iolite", "Moonstone",
+                "Opal", "Pearl", "Peridot", "Ruby", "Sapphire", "Topaz", "Diamond"};
+        int[] probabilities = {2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
+        double[] valueModifier = {0, 5, 10, 10, 5, 20, 10, 5, 15, 2, 15, 25, 30, 20, 25, 20, 25, 20, 25, 20, 30, 30, 30, 30, 35, 35, 30, 30, 35, 35, 30, 35, 35, 35, 40};
+
+        TreasureComponent decoration = new TreasureComponent(0, TreasureComponentType.JEWEL);
+        TreasureComponent weight = new TreasureComponent(1, TreasureComponentType.QUANTITY);
+
+        int index = selectFromProbabilityList(probabilities, randomInt(ArraySum(probabilities)));
+
+        int bigger = 0;
+        while (index == 0) {
+            index = selectFromProbabilityList(probabilities, randomInt(ArraySum(probabilities)));
+            bigger++;
+        }
+
+        decoration.setName(jewels[index]);
+
+        double weightValue = rollD6(2) / 4.0 + rollD6(bigger);
+        weight.setName(weightValue + " carat");
+        int cost = (int) ((int) (weightValue * weightValue + 4 * weightValue) * valueModifier[index] + 100);
+        decoration.setCost(new Price(cost, 0));
+        decoration.addComponent(weight);
+
+        return decoration.assembleTreasure();
+    }
+
+    private enum decorativePrepend {
+        NONE,
+        MADEOF,
+        WITH,
+        POSTWITH
+    }
+    public static TreasureComponent buildSoftEmbellishment(int id) {
+        String[] decorations = {"Fine Material", "Exceptional Material", "Dyed Cheaply", "Dyed", "Dyed Expensively", "Block Printing", "Resist Dyed", "Branding", "Cheap Patchwork", "Expensive Patchwork",
+                "Cheap Fringe", "Expensive Fringe", "Minimal Lace", "Extensive Lace", "Simple Feathers", "Elaborate Feathers", "Cheap Fur Trim", "Expensive Fur Trim", "Minimal Cheap Beading",
+                "Extensive Cheap Beading", "Minimal Expensive Beading", "Extensive Expensive Beading", "Expensive Bells", "Minimal Embroidery", "Extensive Embroidery", "Tattooed Minimally",
+                "Tattooed Extensively", "Tapestry Weaving", "Quilting", "Patchwork Quilt"};
+        int[] probabilities = {2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 2, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
+        double[] costFactors = {2, 19, 1.5, 4, 8, 0.5, 2.5, 0.5, 2, 5, 1, 6, 3.5, 9, 0.5, 4, 3, 8, 1.5, 4, 3, 7, 3, 10, 2, 5, 2, 6, 6, 4, 8};
+        decorativePrepend[] prepend = {decorativePrepend.MADEOF, decorativePrepend.MADEOF, decorativePrepend.NONE, decorativePrepend.NONE, decorativePrepend.NONE, decorativePrepend.WITH,
+                decorativePrepend.NONE, decorativePrepend.WITH, decorativePrepend.WITH, decorativePrepend.WITH, decorativePrepend.WITH, decorativePrepend.WITH, decorativePrepend.WITH,
+                decorativePrepend.WITH, decorativePrepend.WITH, decorativePrepend.WITH, decorativePrepend.WITH, decorativePrepend.WITH, decorativePrepend.WITH, decorativePrepend.WITH,
+                decorativePrepend.WITH, decorativePrepend.WITH, decorativePrepend.WITH, decorativePrepend.WITH, decorativePrepend.WITH, decorativePrepend.NONE, decorativePrepend.NONE,
+                decorativePrepend.MADEOF, decorativePrepend.MADEOF, decorativePrepend.MADEOF};
+
+        TreasureComponent decoration = new TreasureComponent(id, TreasureComponentType.SOFTEMBELLISHMENT);
+
+        int index = selectFromProbabilityList(probabilities, randomInt(ArraySum(probabilities)));
+
+        String name = decorations[index];
+        switch(prepend[index]) {
+            case MADEOF: {
+                name = "made of " + name;
+            } break;
+            case WITH: {
+                name = "with " + name;
+            } break;
+            default:
+                break;
+        }
+        decoration.setName(name);
+        decoration.setCost(new Price(0, costFactors[index]));
+
+        return decoration;
+    }
+
+    public static TreasureComponent buildHardEmbellishment(int id) {
+        String[] decorations = {"Fine Material", "Exceptional Material", "Cheap Fringe", "Expensive Fringe", "Minimal Beads/Nails", "Extensive Beads/Nails", "Branding",
+                "Minimal Painting/Enamel", "Extensive Painting/Enamel", "Minimal Relief", "Extensive Relief", "Minimal Cheap Inlay", "Extensive Cheap Inlay", "Minimal Expensive Inlay",
+                "Extensive Expensive Inlay", "Silver Plating", "Guilding", "Jeweled"};
+        int[] probabilities = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
+        double[] costFactors = {2, 19, 0.25, 0.5, 0.75, 2, 1, 2, 5, 1.5, 4, 2.5, 7, 6, 14, 2, 19, 0};
+        decorativePrepend[] prepend = {decorativePrepend.MADEOF, decorativePrepend.MADEOF, decorativePrepend.WITH, decorativePrepend.WITH, decorativePrepend.WITH,
+                decorativePrepend.WITH, decorativePrepend.WITH, decorativePrepend.WITH, decorativePrepend.WITH, decorativePrepend.WITH, decorativePrepend.WITH,
+                decorativePrepend.WITH, decorativePrepend.WITH, decorativePrepend.WITH, decorativePrepend.WITH, decorativePrepend.WITH, decorativePrepend.WITH,
+                decorativePrepend.POSTWITH};
+
+        TreasureComponent decoration = new TreasureComponent(id, TreasureComponentType.HARDEMBELLISHMENT);
+
+        int index = selectFromProbabilityList(probabilities, randomInt(ArraySum(probabilities)));
+
+        StringBuilder name = new StringBuilder(decorations[index]);
+        switch(prepend[index]) {
+            case MADEOF: {
+                name.insert(0, "made of ");
+            } break;
+            case WITH: {
+                name.insert(0, "with ");
+            } break;
+            case POSTWITH: {
+                name.append(" with");
+            }break;
+            default:
+                break;
+        }
+
+        // a Jewel is a special case
+        if (decorations[index].equals("Jeweled")) {
+            int count = 0;
+            int cost = 0;
+            name.append(" a");
+            for (int i = randomInt(2) + 1; i > 0; i--) {
+                count++;
+                TreasureComponent jewel = buildJewel();
+
+                name.append(" ").append(count > 1 ? "and " : "").append(jewel.name());
+                cost += jewel.cost().value();
+            }
+            decoration.setCost(new Price(cost, 0));
+        } else {
+            decoration.setCost(new Price(0, costFactors[index]));
+        }
+        decoration.setName(name.toString());
+
+        return decoration;
+    }
+
     /**
      * Roll against the race table for the purpose of Contraband Leather
      * @return a fantasy race (including human)
@@ -138,9 +258,22 @@ public class TreasureBuilder {
      *         value of the spice set as the cost.
      */
     public static TreasureComponent buildSpice() {
+        // apply properties from the parent treasure table
+        int properties = randomInt(12);
+        int multiplier = 1;
+        if (properties >= 6 && properties <= 8) {
+            multiplier = 2;
+        } else if (properties >= 9) {
+            multiplier = 3;
+        }
+        int decorative = 0;
+        if (properties == 5 || properties == 8 || properties == 11) {
+            decorative = 1;
+        }
+
         String[] spices = { "Allspice", "Anise", "Annatto", "Asafetida", "Cardamom", "Cassia", "Chiles", "Cinnamon", "Clove", "Coriander", "Cumin", "Dwarven Savory Fungus", "Elven Pepperbark",
                 "Faerie Glimmerseed", "Fennel", "Fenugreek", "Ginger", "Halfling Savory", "Huajiao (Szechuan Pepper)", "Mace", "Mustard", "Nigella", "Nutmeg", "Onion Seed", "Orcish Firegrain",
-                "Pepper, Black", "Pepper, White", "Poppy Seed", "Saffron", "Salt", "Salt, Black", "Salt, Red", "Sumac", "Tamarind", "Tumericc", "Zeodary"};
+                "Black Pepper", "White Pepper", "Poppy Seed", "Saffron", "Salt", "Salt, Black", "Salt, Red", "Sumac", "Tamarind", "Tumericc", "Zeodary"};
         // in dollars, multiply by 100 to get the component price.
         int[] prices = {150, 150, 113, 75, 150, 75, 38, 150, 150, 150, 150, 75, 38, 270, 75, 150, 38, 150, 150, 225, 38, 75, 150, 38, 150, 150, 188, 38, 300, 15, 38, 38, 38, 15, 38, 150};
         // generate the spice
@@ -153,15 +286,29 @@ public class TreasureBuilder {
         // generate the weight
         TreasureComponent weight = new TreasureComponent(1, TreasureComponentType.QUANTITY);
         double weightValue = (randomInt(6) + 1) / 2.0;
+        weightValue *= multiplier;
         weight.setName(new DecimalFormat("0.0", DecimalFormatSymbols.getInstance(Locale.ENGLISH)).format(weightValue) + " oz");
         weight.setCost(new Price(0, weightValue - 1));
-
-        // TODO decorations
 
         // apply the weight to the spice
         spice.addComponent(weight);
 
-        return spice.assembleTreasure();
+        if (decorative > 0) {
+            TreasureComponent embellishment;
+            boolean softMaterial = randomInt(2) == 0;
+            if (softMaterial) { // flip a coin
+                embellishment = buildSoftEmbellishment(2);
+            } else {
+                embellishment = buildHardEmbellishment(2);
+            }
+            TreasureComponent container = new TreasureComponent(3, TreasureComponentType.CONTAINER);
+            container.setName("in a " + (softMaterial ? "Soft" : "Hard") + " Container");
+            container.addComponent(spice);
+            embellishment.addComponent(container);
+            return embellishment.assembleTreasure();
+        } else {
+            return spice.assembleTreasure();
+        }
     }
 
     /* For debugging
@@ -190,6 +337,15 @@ public class TreasureBuilder {
      * describing it's cost, type, weight, and area if applicable.
      */
     public static TreasureComponent buildFiber() {
+        // apply properties from the parent treasure table
+        int properties = randomInt(12);
+        int multiplier = 1;
+        if (properties >= 6 && properties <= 8) {
+            multiplier = 2;
+        } else if (properties >= 9) {
+            multiplier = 3;
+        }
+
         String[] fibers = {"Cloth", "Fur", "Leather", "Fiber"};
         String[][] types = {
                 {"Otherworldly", "Giant-Spider Silk", "Gauze", "Linen", "Pashmina Wool", "Plain Silk", "Samite", "Satin", "Velvet", "Wool"},
@@ -256,6 +412,7 @@ public class TreasureBuilder {
         } else {
             weightValue = weights[fiberCategory][index];
         }
+        weightValue *= multiplier;
         if (weightValue == 1) {
             weight.setName("1 lb.");
         } else {
@@ -265,8 +422,9 @@ public class TreasureBuilder {
 
         // area
         if (areas[fiberCategory].length != 0) {
-            area.setName("per " + areas[fiberCategory][0] + "-sq-foot " + areaType[fiberCategory] + " of");
+            area.setName((areas[fiberCategory][0] * multiplier) + "-sq-foot " + areaType[fiberCategory] + " of");
             area.setID(id++);
+            area.setCost(new Price(0, multiplier - 1));
             fiber.addComponent(area);
         }
 

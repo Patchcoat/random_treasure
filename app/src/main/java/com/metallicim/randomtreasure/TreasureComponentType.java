@@ -24,7 +24,23 @@ public enum TreasureComponentType {
      */
     SPICE,
     /**
-     * The component is fibrous
+     * The component is a fiber, leather, fur, or fabric
      */
-    FIBER
+    FIBER,
+    /**
+     * The component is a container
+     */
+    CONTAINER,
+    /**
+     * The component is a jewel
+     */
+    JEWEL,
+    /**
+     * The component is a soft material embellishment
+     */
+    SOFTEMBELLISHMENT,
+    /**
+     * The component is a hard material embellishment
+     */
+    HARDEMBELLISHMENT
 }
