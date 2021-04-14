@@ -271,6 +271,26 @@ public class TreasureBuilder {
     }
 
     /**
+     * Spices and Other Materials can be decorative, meaning their container is decorated. This function facilitates that.
+     * @param contents what goes inside the container
+     * @return the embellished container
+     */
+    public static TreasureComponent buildMaterialContainer(TreasureComponent contents) {
+        TreasureComponent embellishment;
+        boolean softMaterial = randomInt(2) == 0;
+        if (softMaterial) { // flip a coin
+            embellishment = buildSoftEmbellishment(2);
+        } else {
+            embellishment = buildHardEmbellishment(2);
+        }
+        TreasureComponent container = new TreasureComponent(3, TreasureComponentType.CONTAINER);
+        container.setName("in a " + (softMaterial ? "Soft" : "Hard") + " Container");
+        container.addComponent(contents);
+        embellishment.addComponent(container);
+        return embellishment;
+    }
+
+    /**
      * Build a spice. This includes the type and weight of the spice.
      * @return a TreasureComponent with weight and spice name set as the name, and the monetary
      *         value of the spice set as the cost.
@@ -303,7 +323,7 @@ public class TreasureBuilder {
 
         // generate the weight
         TreasureComponent weight = new TreasureComponent(1, TreasureComponentType.QUANTITY);
-        double weightValue = (randomInt(6) + 1) / 2.0;
+        double weightValue = rollD6(1) / 2.0;
         weightValue *= multiplier;
         weight.setName(new DecimalFormat("0.0", DecimalFormatSymbols.getInstance(Locale.ENGLISH)).format(weightValue) + " oz");
         weight.setCost(new Price(0, weightValue - 1));
@@ -311,22 +331,7 @@ public class TreasureBuilder {
         // apply the weight to the spice
         spice.addComponent(weight);
 
-        if (decorative > 0) {
-            TreasureComponent embellishment;
-            boolean softMaterial = randomInt(2) == 0;
-            if (softMaterial) { // flip a coin
-                embellishment = buildSoftEmbellishment(2);
-            } else {
-                embellishment = buildHardEmbellishment(2);
-            }
-            TreasureComponent container = new TreasureComponent(3, TreasureComponentType.CONTAINER);
-            container.setName("in a " + (softMaterial ? "Soft" : "Hard") + " Container");
-            container.addComponent(spice);
-            embellishment.addComponent(container);
-            return embellishment.assembleTreasure();
-        } else {
-            return spice.assembleTreasure();
-        }
+        return decorative > 0 ? buildMaterialContainer(spice).assembleTreasure() : spice.assembleTreasure();
     }
 
     /* For debugging
@@ -468,5 +473,73 @@ public class TreasureBuilder {
         }
 
         return fiber.assembleTreasure();
+    }
+
+    /**
+     * Unit enum used for the buildOtherMaterial function
+     */
+    private enum unit {
+        NONE,
+        GALLON,
+        PINT,
+        OZ
+    }
+    /**
+     * Build another material such as a beverage, perfume, dye, etc.
+     * @return the material, cost, and quantity
+     */
+    public static TreasureComponent buildOtherMaterial() {
+        // apply properties from the parent treasure table
+        int properties = randomInt(12);
+        int multiplier = 1;
+        if (properties >= 6 && properties <= 8) {
+            multiplier = 2;
+        } else if (properties >= 9) {
+            multiplier = 3;
+        }
+        int decorative = 0;
+        if (properties == 5 || properties == 8 || properties == 11) {
+            decorative = 1;
+        }
+
+        String[] materials = {"Ale", "Distilled Liquor", "Flavored Ale", "Flavored Brandy", "Kumiz", "Mead", "Opium", "Black Tea", "Green Tea", "Date Wine", "Grape Wine",
+        "Rice Wine", "Otherworldly Wine", "Sealing Wax", "Ambergris", "Cedar Resin", "Copal", "Frankincense", "Musk", "Myrrh", "Onycha", "Patchouli", "Sandalwood Gum",
+        "Flower Water", "Perfumed Essence", "Perfumed Oil", "Pomander", "Carmine", "Ochre", "Henna", "Indigo", "Madder", "Murex", "Orpiment", "Woad"};
+        int[] prices = {500, 1600, 750, 2000, 1500, 1100, 2000, 225, 225, 900, 900, 800, 2000, 125, 3500, 1000, 1100, 1600, 2800, 1500, 2000, 900, 850, 500, 1200, 800,
+                900, 4000, 1800, 75, 100, 3200, 200, 2900, 2200, 275};
+        unit[] units = {unit.GALLON, unit.PINT, unit.GALLON, unit.PINT, unit.GALLON, unit.GALLON, unit.OZ, unit.OZ, unit.OZ, unit.GALLON, unit.GALLON, unit.GALLON,
+                unit.GALLON, unit.OZ, unit.OZ, unit.OZ, unit.OZ, unit.OZ, unit.OZ, unit.OZ, unit.OZ, unit.OZ, unit.OZ, unit.OZ, unit.OZ, unit.OZ, unit.OZ, unit.OZ,
+                unit.OZ, unit.OZ, unit.OZ, unit.OZ, unit.OZ, unit.OZ, unit.OZ, unit.OZ};
+
+        // generate the material
+        TreasureComponent material = new TreasureComponent(0, TreasureComponentType.MATERIAL);
+        int index = randomInt(materials.length);
+        material.setName(materials[index]);
+        material.setCost(new Price(prices[index], 0));
+        material.setBookReference("Dungeon Fantasy 8 p. 13");
+
+        // generate the quantity
+        TreasureComponent quantity = new TreasureComponent(1, TreasureComponentType.QUANTITY);
+        double quantityValue = rollD6(1) + 1;
+        quantityValue *= multiplier;
+        StringBuilder unitString = new StringBuilder();
+        switch(units[index]) {
+            case OZ: {
+                unitString.append("oz.");
+            } break;
+            case GALLON: {
+                unitString.append("gallon").append(quantityValue == 1 ? "" : "s");
+            } break;
+            case PINT: {
+                unitString.append("pint").append(quantityValue == 1 ? "" : "s");
+            } break;
+            default:
+                break;
+        }
+        quantity.setName(new DecimalFormat("0.0", DecimalFormatSymbols.getInstance(Locale.ENGLISH)).format(quantityValue) + " " + unitString.toString());
+        quantity.setCost(new Price(0, quantityValue - 1));
+        material.addComponent(quantity);
+
+        return decorative > 0 ? buildMaterialContainer(material).assembleTreasure() : material.assembleTreasure();
     }
 }

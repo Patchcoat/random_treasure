@@ -13,5 +13,6 @@
 
     <string name="spice">Spice</string>
     <string name="fiber">Fiber/Fabric</string>
+    <string name="otherMaterial">Other Material</string>
     <string name="jewel">Jewel</string>
 </resources>

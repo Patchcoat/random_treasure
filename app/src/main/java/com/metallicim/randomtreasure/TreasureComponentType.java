@@ -28,6 +28,10 @@ public enum TreasureComponentType {
      */
     FIBER,
     /**
+     * The component is some other material other than a spice or fiber
+     */
+    MATERIAL,
+    /**
      * The component is a container
      */
     CONTAINER,
